@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Integration;
 
 use App\DTOs\OccurrenceDTO;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreExternalOccurrenceRequest;
+use App\Http\Requests\Integration\StoreExternalOccurrenceRequest;
 use App\Services\Integration\RegisterOccurrenceCommandService;
 use Illuminate\Support\Carbon;
 

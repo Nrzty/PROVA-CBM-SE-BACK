@@ -24,6 +24,7 @@ class EventInbox extends Model
         'type',
         'payload',
         'status',
-        'error'
+        'error',
+        'processed_at',
     ];
 }

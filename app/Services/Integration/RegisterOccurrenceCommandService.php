@@ -8,6 +8,7 @@ use App\Enums\EventEnums\EventInboxType;
 use App\Enums\OccurrenceIntegrationStatus;
 use App\Enums\SqlEnums\SqlUniqueViolation;
 use App\Exceptions\IdempotencyConflictException;
+use App\Jobs\ProcessOccurrenceCreatedJob;
 use App\Models\EventInbox;
 use Illuminate\Database\QueryException;
 
@@ -29,6 +30,9 @@ class RegisterOccurrenceCommandService
                 'payload' => $payload,
                 'status' => $status->value,
             ]);
+
+            ProcessOccurrenceCreatedJob::dispatch($eventInbox->id);
+
             return new IntegrationResult($eventInbox->id, OccurrenceIntegrationStatus::CREATED);
 
         } catch (QueryException $exception) {
