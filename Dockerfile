@@ -42,10 +42,14 @@ RUN composer install --no-interaction --prefer-dist --optimize-autoloader
 # Build frontend assets
 RUN npm ci && npm run build
 
+# Add entrypoint to ensure deps are present when using bind mounts
+COPY docker/entrypoint.sh /usr/local/bin/entrypoint
+RUN chmod +x /usr/local/bin/entrypoint
+
 # Ensure storage permissions
 RUN mkdir -p storage bootstrap/cache \
     && chown -R www-data:www-data storage bootstrap/cache
 
 EXPOSE 9000
 
-CMD ["php-fpm"]
+CMD ["entrypoint"]

@@ -8,47 +8,44 @@ Backend em **Laravel** para receber eventos de um sistema externo, consolidar oc
 
 ## 1) Como rodar backend e frontend
 
-# TL;DR (após clonar)
+### Docker (recomendado)  fluxo mais simples
+
+> Voc pode escolher a porta do Nginx com `APP_PORT` (padro 8000).
 
 ```bash
-cd prova-api
+# subir a stack
+# (opcional) export APP_PORT=8010
+
 docker compose up -d --build
-docker compose exec app cp .env.example .env
-docker compose exec app php artisan key:generate
-docker compose exec app php artisan migrate
+
+# bootstrap (primeira vez)
+docker compose exec app sh -lc "[ -f .env ] || cp .env.example .env; php artisan key:generate; php artisan migrate --force"
 ```
 
-**URL**
-- API: `http://localhost:8000`
+Acesse:
+- API: `http://localhost:${APP_PORT:-8000}`
 
-> Observação: O `docker-compose.yml` injeta variáveis de ambiente essenciais (DB/Redis/API_KEY). Se você preferir, pode ajustar no `.env`.
+> Observao: o container do app garante `composer install` automaticamente no startup se `vendor/` no existir (clone limpo).
 
-### Alternativa Sem Docker: Local
+---
 
-**Pré-requisitos**
-- PHP 8.2+
-- Composer
-- Node 18+
-- Postgres
-- Redis (opcional, mas recomendado para cache)
+## Rodando com Docker (detalhes)
 
-**Instalação**
+Bootstrap em um comando:
+
 ```bash
-composer install
-cp .env.example .env
-php artisan key:generate
-php artisan migrate
-npm install
-npm run build
+docker compose exec app sh -lc "[ -f .env ] || cp .env.example .env; php artisan key:generate; php artisan migrate --force"
 ```
 
-**Rodar**
-Em terminais separados:
+Ver logs:
+
 ```bash
-php artisan serve
-php artisan queue:listen --tries=1 --timeout=0
-npm run dev
+docker compose logs --tail=200 --no-color
 ```
+
+### Versão do PHP
+
+A imagem Docker usa **PHP 8.4** porque o `composer.lock` atual possui dependências (ex.: Symfony 8) que exigem `php >= 8.4`.
 
 ---
 
@@ -159,29 +156,3 @@ Sugestões pragmáticas:
 - **DLQ formal** (fila `dlq`) + rotinas de re-drive automatizadas.
 - **Observabilidade completa**: logs estruturados padronizados + métricas + tracing.
 - **Escalabilidade**: workers horizontais, particionamento por unidade/região.
-
----
-
-## Rodando com Docker (recomendado)
-
-> Importante: execute os comandos **na pasta onde está o arquivo `docker-compose.yml`**.
-
-```bash
-cd prova-api
-```
-
-Suba a stack:
-
-```bash
-docker compose up -d --build
-```
-
-Ver logs (note o parâmetro correto `--tail`):
-
-```bash
-docker compose logs --tail=200 --no-color
-```
-
-### Versão do PHP
-
-A imagem Docker usa **PHP 8.4** porque o `composer.lock` atual possui dependências (ex.: Symfony 8) que exigem `php >= 8.4`.
