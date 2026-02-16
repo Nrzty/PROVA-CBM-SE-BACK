@@ -18,7 +18,7 @@ services:
       REDIS_HOST: redis
       REDIS_PORT: 6379
       REDIS_CACHE_DB: 1
-      QUEUE_CONNECTION: database
+      QUEUE_CONNECTION: sync
       API_KEY: eu-vou-passar
     depends_on:
       - postgres

@@ -8,10 +8,6 @@ use App\Http\Controllers\Api\OccurrenceDispatchController;
 
 
 Route::middleware([AuthApiKeyMiddleware::class])->group(function () {
-    Route::get('/', function () {
-        return 'welcome';
-    });
-
     // API INTERNA
     Route::get('/occurrences', [OccurrenceController::class, 'listAllOccurences']);
     Route::post('/occurrences/{id}/start', [OccurrenceController::class, 'start']);
